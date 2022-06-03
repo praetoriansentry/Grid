@@ -1,0 +1,12 @@
+[Unit]
+Description=Geth Service
+AssertPathExists=/opt/geth
+
+[Service]
+Type=simple
+ExecStart=/opt/geth --http --http.addr 127.0.0.1 --identity {{ geth_identity }} --networkid {{ geth_chain_id }} --unlock 0x{{ geth_key_address }} --mine {% for item in geth_bootnode_enodes %}--bootnodes "{{ item }}" {% endfor %}
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

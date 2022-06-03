@@ -22,11 +22,60 @@
     group: root
     state: link
 
+- name: Create the eth keystore directory
+  become: yes
+  ansible.builtin.file:
+    path: /root/.ethereum/keystore
+    state: directory
+    mode: '0755'
+
 - name: Copy keystore file to host
   become: yes
   ansible.builtin.copy:
     src: "{{ geth_keyfile }}"
+    dest: /root/.ethereum/keystore
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy genesis file to host
+  become: yes
+  ansible.builtin.copy:
+    src: genesis.json
     dest: /root/
     owner: root
     group: root
     mode: '0600'
+
+- name: Check that the eth directory exists
+  become: yes
+  stat:
+    path: /root/.ethereum/geth
+  register: eth_dir_stat_result
+
+
+- name: Initialize the geth data folder with the genesis file
+  become: yes
+  ansible.builtin.shell: geth init /root/genesis.json
+  when: not eth_dir_stat_result.stat.exists
+
+- name: Template geth service
+  become: yes
+  ansible.builtin.template:
+    src: geth.service.j2
+    dest: /etc/systemd/system/geth.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd configs
+  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+
+- name: Make sure geth service unit is running
+  become: yes
+  ansible.builtin.systemd:
+    state: started
+    name: geth

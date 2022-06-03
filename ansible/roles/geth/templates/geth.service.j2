@@ -1,0 +1,13 @@
+[Unit]
+Description=Geth Service
+AssertPathExists=/usr/local/bin/geth
+
+[Service]
+Type=simple
+ExecStart=geth --identity {{ geth_identity }} --networkid {{ geth_chain_id }} --unlock 0x{{ geth_key_address }} --mine {% for item in geth_bootnode_enodes %}--bootnodes "{{ item }}" {% endfor %} --password /dev/null
+
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

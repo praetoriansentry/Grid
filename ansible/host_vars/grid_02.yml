@@ -1,2 +1,4 @@
 ---
-geth_keyfile: UTC--2022-06-03T20-26-15.660079761Z--e388a92ab94b4fc2fbe8956734950f41a7c4589b
+geth_key_address: e388a92ab94b4fc2fbe8956734950f41a7c4589b
+geth_keyfile: UTC--2022-06-03T20-26-15.660079761Z--{{ geth_key_address }}
+geth_identity: grid-02.john.dev
