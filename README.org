@@ -15,3 +15,21 @@
 
 A digital frontier
 
+
+* Ansible Resources
+
+- https://aap2.demoredhat.com/decks/ansible_best_practices.pdf
+- https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html
+
+#+begin_src bash
+
+# List some hosts
+ansible-inventory -i john_hosts --list
+
+# Simple ad-hoc ping check
+ansible all -i john_hosts -m ping
+
+# Get the uptime
+ansible all -i john_hosts -m command -a 'uptime'
+#+end_src
+

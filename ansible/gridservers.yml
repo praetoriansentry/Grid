@@ -1,0 +1,5 @@
+---
+- hosts: john_grid
+  roles:
+    - common
+

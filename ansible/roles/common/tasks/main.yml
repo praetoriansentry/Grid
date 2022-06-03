@@ -1,0 +1,25 @@
+---
+
+- name: Run the equivalent of "apt-get update"
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Update all packages to their latest version
+  become: yes
+  apt:
+    name: "*"
+    state: latest
+
+- name: Install zile
+  become: yes
+  apt:
+    name: zile
+    state: present
+
+- name: Install wget
+  become: yes
+  apt:
+    name: wget
+    state: present
+
