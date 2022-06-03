@@ -21,3 +21,12 @@
     owner: root
     group: root
     state: link
+
+- name: Copy keystore file to host
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ geth_keyfile }}"
+    dest: /root/
+    owner: root
+    group: root
+    mode: '0600'
