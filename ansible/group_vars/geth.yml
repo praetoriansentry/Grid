@@ -1,0 +1,3 @@
+---
+geth_tag_latest: geth-linux-amd64-1.10.18-de23cf91
+geth_download_latest: https://gethstore.blob.core.windows.net/builds/{{ geth_tag_latest }}.tar.gz

@@ -2,4 +2,7 @@
 - hosts: john_grid
   roles:
     - common
+- hosts: geth
+  roles:
+    - geth
 

@@ -1,0 +1,23 @@
+---
+- name: Download the geth client
+  become: yes
+  get_url:
+    url: "{{ geth_download_latest }}"
+    dest: /opt/{{ geth_tag_latest }}.tar.gz
+    mode: '0440'
+
+- name: Extract /opt/{{ geth_tag_latest }}.tar.gz into /opt/{{ geth_tag_latest }}
+  become: yes
+  ansible.builtin.unarchive:
+    src: /opt/{{ geth_tag_latest }}.tar.gz
+    dest: /opt
+    remote_src: yes
+
+- name: Create a symlink to geth
+  become: yes
+  ansible.builtin.file:
+    src: /opt/{{ geth_tag_latest }}/geth
+    dest: /usr/local/bin/geth
+    owner: root
+    group: root
+    state: link
