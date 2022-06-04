@@ -23,3 +23,9 @@
     name: wget
     state: present
 
+- name: Install net-tools
+  become: yes
+  apt:
+    name: net-tools
+    state: present
+

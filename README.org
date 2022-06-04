@@ -36,6 +36,10 @@ ansible all -i john_hosts -m command -a 'uptime'
 
 # Command with become
 ansible all -i john_hosts -m shell -b -a 'rm -rf /opt/*'
+ansible all -i john_hosts -m shell -b -a 'systemctl restart geth'
+ansible all -i john_hosts -m shell -b -a 'systemctl stop geth'
+ansible all -i john_hosts -m shell -b -a 'rm -rf /root/.ethereum'
+ansible all -i john_hosts -m shell -b -a 'rm -rf /root/*'
 
 # Run the full config
 ansible-playbook -i john_hosts --ask-vault-pass site.yml
