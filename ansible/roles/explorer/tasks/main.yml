@@ -1,0 +1,50 @@
+- name: Install explorer packages
+  become: yes
+  apt:
+    pkg:
+    - nodejs
+    - npm
+
+# - name: Git clone expedition
+#   become: yes
+#   ansible.builtin.git:
+#     repo: 'https://github.com/xops/expedition.git'
+#     dest: /opt/expedition
+#     version: 1.11.2
+
+# On the micro instance, it seems like running npm install for expedition hangs
+# - name: Install expedition packages based on package.json.
+#   become: yes
+#   community.general.npm:
+#     path: /opt/expedition
+
+- name: Check if the explorer has been cloned
+  stat:
+    path: /opt/explorer
+  register: explorer_clone_stat_result
+
+- name: Git clone explorer
+  become: yes
+  ansible.builtin.git:
+    repo: 'https://github.com/etherparty/explorer.git'
+    dest: /opt/explorer
+  when: not explorer_clone_stat_result.stat.exists
+
+- name: Install explorer packages based on package.json.
+  become: yes
+  community.general.npm:
+    path: /opt/explorer
+
+- name: Swap for dedicated RPC
+  become: yes
+  ansible.builtin.replace:
+    path: /opt/explorer/app/app.js
+    regexp: 'localhost:8545'
+    replace: '54.173.34.87:8545'
+
+- name: Listen on all interfaces
+  become: yes
+  ansible.builtin.replace:
+    path: /opt/explorer/package.json
+    regexp: 'localhost'
+    replace: '0.0.0.0'

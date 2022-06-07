@@ -15,7 +15,12 @@
 
 A digital frontier
 
-https://geth.ethereum.org/docs/interface/private-network
+- https://geth.ethereum.org/docs/interface/private-network
+- https://ethereum.stackexchange.com/questions/3151/how-to-make-miner-to-mine-only-when-there-are-pending-transactions/3152#3152
+- https://en.wikipedia.org/wiki/Container_Linux
+- https://en.wikipedia.org/wiki/Fedora_Linux#Editions
+- https://www.linuxquestions.org/questions/linux-server-73/directory-quota-601140/
+- https://consensys.net/docs/goquorum//en/latest/configure-and-manage/configure/genesis-file/contracts-in-genesis/
 
 * Ansible Resources
 
@@ -44,6 +49,9 @@ ansible all -i john_hosts -m shell -b -a 'rm -rf /root/*'
 # Run the full config
 ansible-playbook -i john_hosts --ask-vault-pass site.yml
 ansible-playbook -i john_hosts --vault-password-file .vault_pass.txt site.yml
+
+# Run for specific host
+ansible % ansible-playbook -i john_hosts --vault-password-file .vault_pass.txt site.yml --limit grid_05
 
 # Testnet backup
 gpg -a -se -r 2FE2C783343C95357A08385160C9E5DA0BC145B3 .vault_pass.txt
@@ -97,3 +105,42 @@ roles/
     monitoring/           # ""
     fooapp/               # ""
 #+end_export
+
+Creation of a limited folder
+
+#+begin_src bash
+dd if=/dev/zero of=1MB.virt.ext4 count=2000
+mkfs.ext4 1MB.virt.ext4
+sudo mount -o loop,rw 1MB.virt.ext4 limited-folder
+#+end_src
+
+#+begin_export ascii
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        32G  2.9G   29G  10% /
+tmpfs           508M     0  508M   0% /dev/shm
+tmpfs           203M  877k  203M   1% /run
+tmpfs           5.3M     0  5.3M   0% /run/lock
+/dev/xvda15     110M  5.5M  104M   5% /boot/efi
+tmpfs           102M  4.1k  102M   1% /run/user/1000
+/dev/loop10     975k   25k  881k   3% /home/ubuntu/limited-folder
+#+end_export
+
+
+#+begin_export ascii
+# This will work
+dd if=/dev/zero of=test count=1712
+
+# This will fail
+dd if=/dev/zero of=test count=1712
+#+end_export
+
+
+- https://github.com/blockscout/blockscout
+- https://github.com/etherparty/explorer
+- https://github.com/xops/expedition
+- https://github.com/EthVM/EthVM
+- https://github.com/wmitsuda/otterscan
+- https://github.com/ostdotcom/ost-view
+
+Simple local block explorer: https://github.com/xops/expedition - Check this one out locally and point it to an RPC
+

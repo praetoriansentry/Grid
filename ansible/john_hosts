@@ -1,9 +1,13 @@
 [john_grid]
-
 grid_01 ansible_host=grid-01.john.dev
 grid_02 ansible_host=grid-02.john.dev
 grid_03 ansible_host=grid-03.john.dev
 grid_04 ansible_host=grid-04.john.dev
+grid_05 ansible_host=grid-05.john.dev
 
 [geth:children]
 john_grid
+
+[explorer]
+grid_05
+

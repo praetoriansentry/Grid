@@ -4,7 +4,11 @@ AssertPathExists=/usr/local/bin/geth
 
 [Service]
 Type=simple
-ExecStart=geth --identity {{ geth_identity }} --networkid {{ geth_chain_id }} --unlock 0x{{ geth_key_address }} --mine {% for item in geth_bootnode_enodes %}--bootnodes "{{ item }}" {% endfor %} --password /dev/null --nodekey /root/bootnode.key
+{% if geth_key_address is defined %}
+ExecStart=geth --identity {{ geth_identity }} --networkid {{ geth_chain_id }} --unlock 0x{{ geth_key_address }} --mine {% for item in geth_bootnode_enodes %}--bootnodes "{{ item }}" {% endfor %} --password /dev/null --nodekey /root/bootnode.key --gcmode archive --txlookuplimit=0
+{% else %}
+ExecStart=geth --identity {{ geth_identity }} --networkid {{ geth_chain_id }} {% for item in geth_bootnode_enodes %}--bootnodes "{{ item }}" {% endfor %} --gcmode archive --txlookuplimit=0 --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain '*'
+{% endif %}
 
 Restart=always
 RestartSec=60

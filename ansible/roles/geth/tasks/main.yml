@@ -1,17 +1,8 @@
 ---
-- name: Template geth service
-  become: yes
-  ansible.builtin.template:
-    src: geth.service.j2
-    dest: /etc/systemd/system/geth.service
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: Reload systemd configs
-  become: yes
-  ansible.builtin.systemd:
-    daemon_reload: yes
+- name: Check if the geth has been downloaded
+  stat:
+    path: /opt/{{ geth_tag_latest }}.tar.gz
+  register: geth_download_stat_result
 
 - name: Download the geth client
   become: yes
@@ -19,22 +10,11 @@
     url: "{{ geth_download_latest }}"
     dest: /opt/{{ geth_tag_latest }}.tar.gz
     mode: '0440'
-
-- name: Extract /opt/{{ geth_tag_latest }}.tar.gz into /opt/{{ geth_tag_latest }}
-  become: yes
-  ansible.builtin.unarchive:
-    src: /opt/{{ geth_tag_latest }}.tar.gz
-    dest: /opt
-    remote_src: yes
-
-- name: Create a symlink to geth
-  become: yes
-  ansible.builtin.file:
-    src: /opt/{{ geth_tag_latest }}/geth
-    dest: /usr/local/bin/geth
-    owner: root
-    group: root
-    state: link
+  when: not geth_download_stat_result.stat.exists
+  notify:
+    - Extract geth
+    - Create a symlink to geth
+    - Initialize the geth data folder with the genesis file
 
 - name: Create the eth keystore directory
   become: yes
@@ -51,6 +31,7 @@
     owner: root
     group: root
     mode: '0600'
+  when: geth_keyfile is defined
 
 - name: Copy genesis file to host
   become: yes
@@ -61,6 +42,10 @@
     group: root
     mode: '0600'
 
+- name: Check if a nodekey is defined
+  local_action: stat path={{ inventory_hostname }}.key
+  register: geth_node_key_stat_result
+
 - name: Copy nodekey to the host
   become: yes
   ansible.builtin.copy:
@@ -69,6 +54,7 @@
     owner: root
     group: root
     mode: '0600'
+  when: geth_node_key_stat_result.stat.exists
 
 - name: Check that the eth directory exists
   become: yes
@@ -77,15 +63,21 @@
   register: eth_dir_stat_result
 
 
-- name: Initialize the geth data folder with the genesis file
+- name: Template geth service
   become: yes
-  ansible.builtin.shell: geth init /root/genesis.json
-  when: not eth_dir_stat_result.stat.exists
+  ansible.builtin.template:
+    src: geth.service.j2
+    dest: /etc/systemd/system/geth.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart geth service
+    - Reload systemd configs
 
 
-
-- name: Make sure geth service unit is running
+- name: Ensure geth is running
   become: yes
   ansible.builtin.systemd:
-    state: restarted
+    state: started
     name: geth

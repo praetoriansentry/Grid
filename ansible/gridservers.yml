@@ -5,4 +5,7 @@
 - hosts: geth
   roles:
     - geth
+- hosts: explorer
+  roles:
+    - explorer
 

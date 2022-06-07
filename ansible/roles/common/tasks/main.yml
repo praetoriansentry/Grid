@@ -11,21 +11,11 @@
     name: "*"
     state: latest
 
-- name: Install zile
+- name: Install common base packages
   become: yes
   apt:
-    name: zile
-    state: present
-
-- name: Install wget
-  become: yes
-  apt:
-    name: wget
-    state: present
-
-- name: Install net-tools
-  become: yes
-  apt:
-    name: net-tools
-    state: present
-
+    pkg:
+    - net-tools
+    - wget
+    - zile
+    - git

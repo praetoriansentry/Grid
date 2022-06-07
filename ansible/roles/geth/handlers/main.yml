@@ -1,0 +1,31 @@
+- name: Reload systemd configs
+  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Restart geth service
+  become: yes
+  ansible.builtin.systemd:
+    state: restarted
+    name: geth
+
+- name: Extract geth
+  become: yes
+  ansible.builtin.unarchive:
+    src: /opt/{{ geth_tag_latest }}.tar.gz
+    dest: /opt
+    remote_src: yes
+
+- name: Create a symlink to geth
+  become: yes
+  ansible.builtin.file:
+    src: /opt/{{ geth_tag_latest }}/geth
+    dest: /usr/local/bin/geth
+    owner: root
+    group: root
+    state: link
+
+- name: Initialize the geth data folder with the genesis file
+  become: yes
+  ansible.builtin.shell: geth init /root/genesis.json
+  when: not eth_dir_stat_result.stat.exists
